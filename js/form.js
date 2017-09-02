@@ -11,13 +11,36 @@ btnAdicionarPaciente.addEventListener("click", function(event){
 
     //-- Montando uma nova linha no HTML com os dados do objeto
     var pacienteTr = montaTr(paciente);
-    
+
+    //-- Validando os dados do paciente antes de incluir;
+    var erros = validaPaciente(paciente);
+
+    if (erros.length > 0) {
+        exibeMensagensDeErro(erros);
+        return;
+    }
+
     //-- Associando o TR à Tabela;
     var tabela = document.querySelector("#tabela-pacientes");
     tabela.appendChild(pacienteTr);
     
     form.reset();
+
+    var mensagensDeErro = document.querySelector("#mensagens-erro");
+    mensagensDeErro.innerHTML = "";
 });
+
+function exibeMensagensDeErro(erros) {
+    
+    var ul = document.querySelector("#mensagens-erro");
+    ul.innerHTML = "";
+
+    erros.forEach(function(erro) {
+        var li = document.createElement("li");
+        li.textContent = erro;
+        ul.appendChild(li);   
+    });
+}
 
 function obtemPacienteDoFormulario(form) {
     
@@ -54,4 +77,31 @@ function montaTr(paciente) {
     pacienteTr.appendChild(montaTd(paciente.imc,     'info-imc'));
     
     return pacienteTr;
+}
+
+function validaPaciente(paciente) {
+
+    var erros = [];
+
+    if (paciente.nome.length == 0) {
+        erros.push("Informe o nome");
+    }
+
+    if (paciente.peso.length == 0) {
+        erros.push("Informe o peso");
+    } else if (!validaPeso(paciente.peso)) {
+        erros.push("Peso inválido");
+    }
+
+    if (paciente.altura.length == 0) {
+        erros.push("Informe a altura");
+    } else if (!validaAltura(paciente.altura)) {
+        erros.push("Altura inválida");
+    }
+
+    if (paciente.gordura.length == 0) {
+        erros.push("Informe o % de gordura");
+    }
+
+    return erros;
 }
